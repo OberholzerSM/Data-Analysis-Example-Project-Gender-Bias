@@ -66,7 +66,7 @@ quantile(p.total, c(0.025, 0.5, 0.975))
 | -------------  | ------|------ | ------|
 | p.total        | 15.2% | 16.6% | 18.0% | 
 
-According to our first model, the overall acceptance rate lies between $15.2$% and $18.0$%, with a median of $16.6$%. In the next segment, we can look at the acceptance rate split across gender and see how they differ.
+According to our first model, the overall acceptance rate lies between $15.2$% and $18.0$%, with a median of $16.6$%. In the next segment, we can look at the acceptance rates split across genders and see how they differ.
 
 <b>
 Note:
@@ -82,8 +82,44 @@ sigma ~ dcauchy(0,2)
  
 </p>
 
-## Model 2: Acceptance Rate for Different Genders
+## Model 2: Acceptance Rate for the Different Genders
+
+<p align="justify"> 
+
+We will now update the model to differentiate between the acceptance rates of the two provided genders.
+
+```R
+NWOGrants$gender_id <- coerce_index( NWOGrants$gender ) 
+model2 <- alist(
+  awards ~ dbinom(applications,p),
+  logit(p) <- a[gender_id],
+  a[gender_id] ~ dnorm(0,10)
+)
+output2 <- map(model2, data = NWOGrants)
+```
+
+To see whether our new model is a better fit for the data, or in other words if the difference between the genders is significant, we can compute the so-called WAIC score. The WAIC score is a measure of how well a model fits a given dataset, while crucially also punishing
+models that overfit the data with too many parameters. The lower the WAIC, the better of a fit a model is. In our case, we obtain the following WAIC's:
+
+| Model  | WAIC  |  SE   | dWAIC | dSE  | pWAIC | weight |
+| -------|-------|-------|-------|------|-------|--------|
+|output2 | 129.7 |  8.89 |  0.0  | NA   | 4.7   | 0.57   |
+|output1 | 130.3 | 12.94 |  0.6  | 6.29 | 2.8   | 0.43   |
+
+The second model indeed has a lower WAIC than the first, although not by a huge margin. To better see if the gender difference is statistically significant, we can look at the quantiles of the two acceptance ratios as well as the difference between them.
+
+| Value             |  2.5% | 50.0% | 97.5% |
+| ------------------|-------|------ |-------|
+| p.female          | 13.0% | 14.9% | 17.0% | 
+| p.male            | 15.9% | 17.7% | 19.6% | 
+| p.male - p.female | 0.05% | 2.79% | 5.54% | 
+
+For women, the application rate is estimated to be around $\sim 15$%, while for men it is almost $\sim 18$%. The 95% intervall for the difference lies between $0.05$% and $5.54$%, thus indeed showing a statistically significant difference.
+
+</p>
 
 ## Model 3: Acceptance Rate Across Departments
 
 ## Model 4: Acceptance Rate Across Departments and Genders
+
+## Conclusion
