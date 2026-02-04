@@ -8,18 +8,18 @@ In 2015, the Netherlands Organization for Scientific Research (NWO) published a 
 The study alongside the data can be found here: https://doi.org/10.1073/pnas.151015911 (03.02.2026)
 </p>
 
-## Model 1: Overall admission rate
+## Model 1: Overall Admission Rate
 
 <p align="justify"> 
 
-To begin, we will construct a statistical model that ignores the gender and only focuses on the admission rate. Later, we will be able to compare this model to one where the gender is accounted for. Since an application can either be accepted or rejected, we assume that our data follows a binomial distribution,
+To begin, we will construct a statistical model that ignores the gender and only focuses on the admission rate. Later, we will be able to compare this model to one where the gender is accounted for. Since an application can either be accepted or rejected, we assume that our data follows a binomial distribution.
 
 
 ```R
 awards ~ dbinom(applications,p)
 ```
 
-where $p$ represents the admission rate. To generate possible values for $p$, we need a function that only accepts values between $0$ and $1$ while also allowing us to tie it to our data. For those purposes, we will use the $logit$ function and for now assign it a constant value $a$,
+where $p$ represents the admission rate. To generate possible values for $p$, we need a function that only accepts values between $0$ and $1$ while also allowing us to tie it to our data. For those purposes, we will use the $logit$ function and for now assign it a constant value $a$.
 
 ```R
 logit(p) <- a
@@ -82,7 +82,7 @@ sigma ~ dcauchy(0,2)
  
 </p>
 
-## Model 2: admission rate for the Different Genders
+## Model 2: Admission Rate for the Different Genders
 
 <p align="justify"> 
 
@@ -118,7 +118,7 @@ For women, the application rate is estimated to be around $\sim 15$%, while for 
 
 </p>
 
-## Model 3: admission rate Across Departments
+## Model 3: Admission Rate Across Departments
 
 While it seems that we have already proven our thesis in the previous section, we have not accounted for the full dataset yet, which also provides us with the number of approved applications for each University discipline. It is possible that only some but not all faculties show a gender bias in the application approval process, making it worth to investigate matters further.
 
@@ -148,12 +148,12 @@ Our new model does indeed lower the WAIC, signifying that the difference in admi
   </p>
   <figcaption>
     <p align="center">
-    Fig. 1: admission rate for the different disciplines. The dashed line represents the mean across disciplines.
+    Fig. 1: Admission rate for the different disciplines. The dashed line represents the mean across disciplines.
     </p>
   </figcaption>
 </figure>
 
-## Model 4: admission rate Across Departments and Genders
+## Model 4: Admission Rate Across Departments and Genders
 
 For the final model, we take both the gender and the discipline into account and compute the WAIC.
 
@@ -174,13 +174,13 @@ output4 <- map(model4, data = NWOGrants)
 |output2 | 129.7 |  0.17  |
 |output1 | 130.3 |  0.15  |
 
-We obtain that our new model <i>increases<\i> the WAIC, suggesting that the difference between genders is no longer statistically significant! This seems to contradict our result from section 2-
+We obtain that our new model <i>increases</i> the WAIC, suggesting that the difference between genders is no longer statistically significant! This seems to contradict our result from section 2-
 
-To better see what might be going on, we can look at Fig. 2 showing the different admission rates for the disciplines split across the genders. What is notable are the very large error bars, being as large as $20$% for the Physics department! This can be explained by the very few data points provided within each discipline. In the case of the Physics department, there were only $9$ female applicants, out of which only $2$ were accepted!
+To better see what might be going on, we can look at Fig. 2 showing the different admission rates for the disciplines split across the genders. What is notable are the very large error bars, being as large as $20$% for the Physics department. This can be explained by the very few data points provided within each discipline. In the case of the Physics department, there were only $9$ female applicants, out of which only $2$ were accepted.
 
-These large uncertainties then also bleed over to the difference between the admission rate of the genders, showcased in Fig. 3. The error bars are now large enough to still cover the possibility of the difference being $0$%, meaning we can no longer confidently claim there to be a gender bias within any of the disciplines.
+These large uncertainties also bleed over to the difference between the admission rate of the genders, showcased in Fig. 3. The error bars are now large enough to still cover the possibility of the difference being $0$%, meaning we can no longer confidently claim there to be a gender bias within any of the disciplines.
 
-It is however notable that for every discipline the admission rate is consistently higher for men than for women, including the medical sciences which have had more women apply than men. As such, the possibility of a gender bias is still very much worth investigating, though more data needs to be collected within each discipline to definitely prove its presence.
+It is however notable that for each discipline the admission rate is consistently higher for men than for women, including the medical sciences which have had more women apply than men. As such, the possibility of a gender bias is still very much worth investigating, though more data needs to be collected within each discipline to definitely prove its presence.
 
 <figure>
   <p align="center">
@@ -188,7 +188,7 @@ It is however notable that for every discipline the admission rate is consistent
   </p>
   <figcaption>
     <p align="center">
-    Fig. 2: Admission rate for the different disciplines. The dashed lines represents the mean across disciplines.
+    Fig. 2: Admission rate for the different disciplines. The dashed lines represents the mean across disciplines.<br />
     Red: Female Applicants. Blue: Male Applicants.
     </p>
   </figcaption>
@@ -208,10 +208,10 @@ It is however notable that for every discipline the admission rate is consistent
 
 ## Conclusion
 
--When taken across all disciplines, the admission rate for men is statistically higher than for women.
+-When taken across all disciplines, the admission rate for men is higher than for women with a statistically significant difference.
 
--However, the admission rate varies significantly across disciplines. As such, each discipline needs to be evaluated individually.
+-However, the admission rate also varies significantly across disciplines. As such, each discipline needs to be evaluated individually.
 
--Although the admission rate for men is higher than for women within each discipline, there is unfortunately not enough data within the disciplines to prove or disprove a gender bias.
+-While the admission rate for men is higher than for women within each discipline, there is unfortunately not enough data within the disciplines to prove or disprove a gender bias.
 
--> More data needs to be collected.
+-> More data needs to be collected. The University should take measures to encourage more applications.
