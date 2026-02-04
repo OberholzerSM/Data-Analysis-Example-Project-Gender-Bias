@@ -30,7 +30,7 @@ The $logit$ function is defined as
 logit(p) = ln\left[ \frac{p}{1+p} \right]
 ```
 
-The value for $a$ can be sampled for a normal distribution with a sufficiently large standard deviation, for example
+The value for $a$ can be sampled from a normal distribution with a sufficiently large standard deviation.
 
 ```R
 a ~ dnorm(0,10)
@@ -101,10 +101,10 @@ output2 <- map(model2, data = NWOGrants)
 To see whether our new model is a better fit for the data, or in other words if the difference between the genders is significant, we can compute the so-called WAIC score. The WAIC score is a measure of how well a model fits a given dataset, while crucially also punishing
 models that overfit the data with too many parameters. The lower the WAIC, the better of a fit a model is. In our case, we obtain the following WAIC's:
 
-| Model  | WAIC  |  SE   | dWAIC | dSE  | pWAIC | weight |
-| -------|-------|-------|-------|------|-------|--------|
-|output2 | 129.7 |  8.89 |  0.0  | NA   | 4.7   | 0.57   |
-|output1 | 130.3 | 12.94 |  0.6  | 6.29 | 2.8   | 0.43   |
+| Model  | WAIC  | weight |
+| -------|-------|--------|
+|output2 | 129.7 |  0.57  |
+|output1 | 130.3 |  0.43  |
 
 The second model indeed has a lower WAIC than the first, although not by a huge margin. To better see if the gender difference is statistically significant, we can look at the quantiles of the two acceptance ratios as well as the difference between them.
 
@@ -114,11 +114,44 @@ The second model indeed has a lower WAIC than the first, although not by a huge 
 | p.male            | 15.9% | 17.7% | 19.6% | 
 | p.male - p.female | 0.05% | 2.79% | 5.54% | 
 
-For women, the application rate is estimated to be around $\sim 15$%, while for men it is almost $\sim 18$%. The 95% intervall for the difference lies between $0.05$% and $5.54$%, thus indeed showing a statistically significant difference.
+For women, the application rate is estimated to be around $\sim 15$%, while for men it is almost $\sim 18$%. The 95% intervall for the difference between the two lies between $0.05$% and $5.54$%, thus indeed showing a statistically significant difference.
 
 </p>
 
 ## Model 3: Acceptance Rate Across Departments
+
+While it seems that we have already proven our thesis in the previous section, we have not accounted for the full dataset yet, which also provides us with the number of approved application for each University discipline. It is possible that only some but not all faculties show a gender bias in the application approval process, making it worth to investigate matters further.
+
+As before, we begin with a simple model where we ignore the gender at first and focus on the individual disciplines. We follow a similar approach to section 2 and compute the WAIC.
+
+```R
+NWOGrants$department_id <- coerce_index( NWOGrants$discipline ) 
+model3 <- alist(
+  awards ~ dbinom(applications,p),
+  logit(p) <- b[department_id],
+  b[department_id] ~ dnorm(0,10)
+)
+output3 <- map(model3, data = NWOGrants)
+```
+
+| Model  | WAIC  | weight |
+| -------|-------|--------|
+|output3 | 127.5 |  0.63  |
+|output2 | 129.7 |  0.24  |
+|output1 | 130.3 |  0.13  |
+
+Our new model does indeed lower the WAIC, signifying that the difference in acceptance rates between disciplines is signficant enough that we need to take it into account. The acceptance rates for the different disciplines alongside their $95$% intervall are shown in Fig. 1.
+
+<figure>
+  <p align="center">
+  <img src="/Images/01_Departments.png" width="600" height="1200"/>
+  </p>
+  <figcaption>
+    <p align="center">
+    Fig. 1: Acceptance rate for the different disciplines. The dashed line represents the mean of the total acceptance rate.
+    </p>
+  </figcaption>
+</figure>
 
 ## Model 4: Acceptance Rate Across Departments and Genders
 
