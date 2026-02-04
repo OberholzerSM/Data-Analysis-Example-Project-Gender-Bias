@@ -144,7 +144,7 @@ Our new model does indeed lower the WAIC, signifying that the difference in admi
 
 <figure>
   <p align="center">
-  <img src="/Images/01_Departments.png" width="600" height="1200"/>
+  <img src="/Images/01_Departments.png" width="900" height="1800"/>
   </p>
   <figcaption>
     <p align="center">
